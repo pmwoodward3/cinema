@@ -1,6 +1,6 @@
 # Cinema
 A torrent movie streaming service. Inspired by [joker.org](http://joker.org).
-A brief demo video can be viewed [http://a.pomf.se/qobqjc.mp4](here).
+A brief demo video can be viewed [here](http://a.pomf.se/qobqjc.mp4).
 
 ### How it works
 Simply provide a torrent or magnet link, and the movie file within the torrent will start

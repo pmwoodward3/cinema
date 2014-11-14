@@ -4,7 +4,7 @@ var videojs			= require('video.js');
 var io 				= require('socket.io-client');
 var ss 				= require('socket.io-stream');
 var VideoStream 	= require('webtorrent/lib/video-stream.js');
-var Transcoder		= require('stream-transcoder');
+var parseTorrent	= require('parse-torrent');
 
 // Expose jQuery to the global scope so that bootstrap.min.js can see it.
 window.jQuery = $;
@@ -39,14 +39,42 @@ $().ready(function() {
 		});
 	});
 
-	socket.on('error', function(data) {
+	socket.on('error message', function(data) {
 		console.error(data.message);
+		
+		setTimeout(function() {
+
+			sweetAlert({
+				title: "An error occured",
+				text: data.message,
+				type: 'error',
+			}, function() {
+				$('#torrent-id').val('');
+				$('#torrent-id').removeClass('animated zoomOutDown');
+				$('#torrent-id').addClass('animated zoomInUp');
+			});
+
+		}, 500);
 	});
 
 	$('#torrent-id').on('input', function() {
-		socket.emit('torrent', {
-			torrentId: $('#torrent-id').val(),
-		});
+		var torrentId = $(this).val();
+		var info = parseTorrent(torrentId);
+
+		if (!info) {
+			sweetAlert({
+				title: "Invalid link",
+				text: "The link you provided was not valid, try another one.",
+				type: 'error',
+			});
+			$(this).val('');
+			return;
+		}
+
+		console.log(info);
+
+		socket.emit('torrent', { torrentId: torrentId });
+
 		$(this).addClass('animated zoomOutDown');
 	});
 

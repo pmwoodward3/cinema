@@ -1,9 +1,15 @@
 #main {
-	margin-top: 20px;
+}
+
+#title {
+	font-size: 5em;
+	font-size: 300;
+	text-align: center;
+	margin-bottom: 10px;
 }
 
 #torrent-id {
-	margin-top: 20%;
+	margin-top: 50px;
 }
 
 #video {

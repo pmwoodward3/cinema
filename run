@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Convenience script
+node ./server/app.js

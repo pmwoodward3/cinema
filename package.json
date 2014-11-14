@@ -1,6 +1,6 @@
 {
   "name": "cinema",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "repository": "ts95/cinema",
   "author": "Toni Sučić <toni.sucic@icloud.com>",
   "devDependencies": {
@@ -13,6 +13,7 @@
   "dependencies": {
     "jquery": "^2.1.1",
     "node-static": "^0.7.6",
+    "parse-torrent": "^2.1.2",
     "socket.io": "^1.2.0",
     "socket.io-client": "^1.2.0",
     "socket.io-stream": "^0.5.0",

@@ -56,8 +56,8 @@ router.get('/stream/:infoHash', function(req, res) {
 		var chunkSize = (end - start) + 1;
 
 		if (group.length >= 3) {
-			var start = groups[1];
-			var end = groups[2];
+			start = groups[1];
+			end = groups[2];
 		}
 
 		res.writeHead(206, {
@@ -65,14 +65,24 @@ router.get('/stream/:infoHash', function(req, res) {
 			'Accept-Ranges': 'bytes',
 			'Content-Range': 'bytes ' + start + '-' + end + '/' + length,
 			'Content-Length': chunkSize,
+			'Cache-Control': 'no-cache, no-store, must-revalidate',
+			'Pragma': 'no-cache',
+			'Expires': 0,
 		});
 		movieFile.createReadStream({ start: start, end: end }).pipe(res);
+
+		console.log('HTTP 206');
 	} else {
 		res.writeHead(200, {
 			'Content-Type': contentType,
 			'Content-Length': length,
-		});	
+			'Cache-Control': 'no-cache, no-store, must-revalidate',
+			'Pragma': 'no-cache',
+			'Expires': 0,
+		});
 		movieFile.createReadStream().pipe(res);
+
+		console.log('HTTP 200');
 	}
 });
 
@@ -149,8 +159,6 @@ io.on('connection', function(socket) {
 				webTorrent.remove(data.torrentId);
 				return;
 			}
-
-			console.log('Streaming movie:', movieFile.name);
 
 			socket.emit('play', {
 				videoLink: '/stream/' + torrent.infoHash,

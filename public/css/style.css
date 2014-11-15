@@ -1,11 +1,7 @@
-#main {
-}
-
 #title {
 	font-size: 5em;
 	font-size: 300;
 	text-align: center;
-	margin-bottom: 10px;
 }
 
 #torrent-id {
@@ -13,8 +9,18 @@
 }
 
 #video {
+	margin-top: -70px;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+#statistics {
+	margin-top: 70px;
+}
+
+#please-wait {
+	font-size: 1.4em;
+	text-align: center;
 }
 
 .hide {

@@ -15,7 +15,6 @@ var io 				= require('socket.io')(app);
 
 app.listen(8000);
 
-var connectedCount = 0;
 var webTorrent = new WebTorrent();
 
 function getFirstMovieFile(torrentFiles) {
@@ -24,18 +23,29 @@ function getFirstMovieFile(torrentFiles) {
 	}));
 }
 
+function getClientsConnected() {
+	return Object.keys(io.sockets.adapter.rooms).length;
+}
+
 router.get('/stream/:infoHash', function(req, res) {
+	if (req.method !== 'GET') {
+		res.writeHead(405, {
+			'Allow': 'GET',
+			'Content-Type': 'text/plain',
+		});
+		res.end("Method not allowed");
+		return;
+	}
+
 	var torrent = _.first(_.filter(webTorrent.torrents, function(torrent) {
 		return torrent.infoHash == req.params.infoHash;
 	}));
 
 	var movieFile = getFirstMovieFile(torrent.files);
 
-	var contentType = 'video/mp4';
-
 	if (!movieFile) {
 		res.writeHead(404, {
-			'Content-Type': contentType,
+			'Content-Type': 'text/plain',
 		});
 		res.end("File not found");
 		return;
@@ -43,68 +53,52 @@ router.get('/stream/:infoHash', function(req, res) {
 
 	// https://gist.github.com/paolorossi/1993068
 
-	var range = res.getHeader('Range');
-
+	var contentType = 'video/mp4';
+	var range = req.headers.range;
 	var length = movieFile.length;
 
 	if (range) {
-		var regex = /^bytes (\d+)-(?:(\d+)(?:\/(\d+|\*))?)?$/;
-		var groups = _.compact(regex.exec(range));
+		var groups = _.compact(/^bytes=(\d+)-(\d+)?$/.exec(range));
 
 		var start = 0;
 		var end = length - 1;
 		var chunkSize = (end - start) + 1;
 
-		if (group.length >= 3) {
-			start = groups[1];
-			end = groups[2];
+		if (groups.length >= 3) {
+			start = parseInt(groups[1]);
+			end = parseInt(groups[2]);
+			chunkSize = (end - start) + 1;
 		}
 
+		var contentRange = start + '-' + end + '/' + length;
+
 		res.writeHead(206, {
-			'Content-Type': contentType,
 			'Accept-Ranges': 'bytes',
-			'Content-Range': 'bytes ' + start + '-' + end + '/' + length,
+			'Content-Type': contentType,
+			'Content-Range': 'bytes ' + contentRange,
 			'Content-Length': chunkSize,
-			'Cache-Control': 'no-cache, no-store, must-revalidate',
-			'Pragma': 'no-cache',
-			'Expires': 0,
 		});
 		movieFile.createReadStream({ start: start, end: end }).pipe(res);
 
-		console.log('HTTP 206');
+		console.log('HTTP 206 – Range:', contentRange);
 	} else {
 		res.writeHead(200, {
 			'Content-Type': contentType,
 			'Content-Length': length,
-			'Cache-Control': 'no-cache, no-store, must-revalidate',
-			'Pragma': 'no-cache',
-			'Expires': 0,
 		});
 		movieFile.createReadStream().pipe(res);
 
-		console.log('HTTP 200');
+		console.log('HTTP 200 – All:', length);
 	}
 });
 
-/*
-Divergent
-magnet:?xt=urn:btih:2d58067bee4d36f294d0485f2506815c32a89900&dn=Divergent+%282014%29+1080p+BrRip+x264+-+YIFY&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Ftracker.publicbt.com%3A80&tr=udp%3A%2F%2Ftracker.istole.it%3A6969&tr=udp%3A%2F%2Fopen.demonii.com%3A1337
-
-Lucy
-magnet:?xt=urn:btih:d8cef4a7a18ddc09e5607ea09075507675ef6f1c&dn=Lucy.2014.1080p.WEB-DL.x264.anoXmous&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=udp%3A%2F%2Ftracker.publicbt.com%3A80&tr=udp%3A%2F%2Ftracker.istole.it%3A6969&tr=udp%3A%2F%2Fopen.demonii.com%3A1337
-
-http://1stdev.com/tremendum-transcoder/articles/seeking-videos-beyond-the-buffer-line/
-*/
-
 io.on('connection', function(socket) {
 
-	connectedCount++;
-
-	console.log('Client with id ' + socket.id + ' connected.');
+	console.log('Client with id <' + socket.id + '> connected.');
 
 	function emitStatistics() {
 		io.sockets.emit('statistics', {
-			streamers: connectedCount,
+			streamers: getClientsConnected(),
 			torrents: webTorrent.torrents.length,
 		});
 	}
@@ -112,11 +106,9 @@ io.on('connection', function(socket) {
 	emitStatistics();
 
 	socket.on('disconnect', function() {
-		connectedCount--;
-
 		emitStatistics();
 
-		console.log('Client with id ' + socket.id + ' disconnected.');
+		console.log('Client with id <' + socket.id + '> disconnected.');
 	});
 
 	socket.on('torrent', function(data) {
@@ -163,6 +155,8 @@ io.on('connection', function(socket) {
 			socket.emit('play', {
 				videoLink: '/stream/' + torrent.infoHash,
 			});
+
+			console.log('<' + socket.id + '>', 'is streaming', movieFile.name);
 
 			emitStatistics();
 		}

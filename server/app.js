@@ -13,7 +13,7 @@ var router = new Router({
 var app = require('http').createServer(router);
 var io  = require('socket.io')(app);
 
-app.listen(process.env.CINEMA_PORT || 8000);
+app.listen(parseInt(process.env.CINEMA_PORT) || 8000);
 
 var webTorrent = new WebTorrent();
 

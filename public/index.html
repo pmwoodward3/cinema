@@ -1,58 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Toni Sucic">
 
-	<title>Cinema</title>
+    <title>Cinema</title>
 
-	<link rel="stylesheet" href="http://vjs.zencdn.net/4.10/video-js.css">
-	<link rel="stylesheet" href="/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/css/animate.min.css">
-	<link rel="stylesheet" href="/css/sweet-alert.min.css">
-	<link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="http://vjs.zencdn.net/4.10/video-js.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/animate.min.css">
+    <link rel="stylesheet" href="/css/sweet-alert.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-	<div class="container">
-		<div class="col-sm-offset-2 col-sm-8">
-			<h1 id="title" class="animated bounceInDown"><a href="/">CINEMA</a></h1>
+    <div id="main" class="container">
+        <div class="col-sm-offset-2 col-sm-8">
+            <h1 id="title" class="animated bounceInDown"><a href="/">CINEMA</a></h1>
 
-			<input class="form-control animated fadeIn" id="torrent-id" type="text" autofocus
-					placeholder="Paste a torrent or magnet link here">
-			<p id="please-wait" class="hide animated bounceInUp">Please wait...</p>
-		</div>
+            <input class="form-control animated fadeIn" id="torrent-id" type="text" autofocus
+                    placeholder="Paste a torrent or magnet link here">
+            <p id="loader" class="hide animated bounceInUp">Loading...</p>
+        </div>
 
-		<div class="col-sm-12">
-			<video id="video" class="video-js vjs-default-skin animated zoomInUp hide"
-					controls preload="auto" width="100%" height="465px">
-				<p class="vjs-no-js">
-					To view this video please enable JavaScript, and consider upgrading to a web browser
-					that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-				</p>
-			</video>
-		</div>
+        <div class="col-sm-12">
+            <video id="video" class="video-js vjs-default-skin animated zoomInUp hide"
+                    controls preload="auto" width="100%" height="465px">
+                <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a web browser
+                    that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                </p>
+            </video>
+        </div>
 
-		<div class="col-sm-offset-2 col-sm-8">
-			<table id="statistics" class="table hide animated bounceInUp">
-				<thead>
-					<tr>
-						<th title="Number of users that are streaming now.">Streamers</th>
-						<th title="Number of torrents that have been added.">Torrents</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td id="statistics-streamers"></td>
-						<td id="statistics-torrents"></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
+        <div class="col-sm-offset-2 col-sm-8">
+            <table id="statistics" class="table hide animated bounceInUp">
+                <thead>
+                    <tr>
+                        <th title="Number of users that are streaming now.">Streamers</th>
+                        <th title="Number of torrents that have been added.">Torrents</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="statistics-streamers"></td>
+                        <td id="statistics-torrents"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-	<script src="/js/bundle.js"></script>
-	<script src="/js/bootstrap.min.js"></script>
-	<script src="/js/sweet-alert.min.js"></script>
+    <script src="/js/bundle.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/sweet-alert.min.js"></script>
 </body>
 </html>

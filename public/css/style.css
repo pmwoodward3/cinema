@@ -1,28 +1,29 @@
 #title {
-	font-size: 5em;
-	font-size: 300;
-	text-align: center;
+    font-size: 5em;
+    font-size: 300;
+    text-align: center;
 }
 
 #torrent-id {
-	margin-top: 50px;
+    margin-top: 50px;
 }
 
 #video {
-	margin-top: -70px;
-	margin-left: auto;
-	margin-right: auto;
+    margin-top: -70px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #statistics {
-	margin-top: 70px;
+    margin-top: 70px;
 }
 
-#please-wait {
-	font-size: 1.4em;
-	text-align: center;
+#loader {
+    color: #333;
+    font-size: 1.4em;
+    text-align: center;
 }
 
 .hide {
-	display: none;
+    display: none;
 }

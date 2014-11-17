@@ -14,27 +14,31 @@ $.isIE = function() {
 };
 
 $().ready(function() {
-	videojs('#video', { techOrder: ['html5'] }, _.noop);
+	videojs('#video', { /* techOrder: ['html5'] */ }, _.noop);
 
-	var socket = io.connect('http://' + window.location.host);
+	var socket = io.connect(location.protocol + '//' + location.host);
 
 	socket.on('play', function(data) {
-		var video = document.querySelector('#video_html5_api');
-
 		videojs('#video').ready(function() {
 			var player = this;
 
-			var source = $('<source>');
-			source.attr('type', 'video/mp4');
-			source.attr('src', data.videoLink);
-
-			$('#video_html5_api').append(source);
+			player.src({
+				src: data.videoLink,
+				type: 'video/mp4'
+			});
 
 			setTimeout(function() {
-				$('#please-wait').toggleClass('hide');
+				$('#loader').toggleClass('hide');
 				$('#video').toggleClass('hide');
+
 				player.play();
+
+				console.log("The movie has started playing.");
 			}, 1500);
+
+			player.on('ended', function() {
+				console.log("The movie has ended.");
+			});
 		});
 
 		$('#torrent-id').val('');
@@ -49,7 +53,7 @@ $().ready(function() {
 				text: data.message,
 				type: 'error',
 			}, function() {
-				$('#please-wait').toggleClass('hide');
+				$('#loader').toggleClass('hide');
 				$('#torrent-id').val('');
 				$('#torrent-id').removeClass('animated zoomOutDown');
 				$('#torrent-id').addClass('animated zoomInUp');
@@ -92,7 +96,7 @@ $().ready(function() {
 		socket.emit('torrent', { torrentId: torrentId });
 
 		$(this).addClass('animated zoomOutDown');
-		$('#please-wait').toggleClass('hide');
+		$('#loader').toggleClass('hide');
 	});
 
 });
